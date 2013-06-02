@@ -10,12 +10,12 @@ main(int argc, char **argv)
     int time_to_live;
     int pari_dispari_pid_download;
     int quantita_download;
-   
-   time_upload = atoi(argv[1]);
-   upload_val = atoi(argv[1]);
+   printf("\n Cooperante: upload_val %s \n", argv[1]);
+   /*time_upload = atoi(argv[0]);
+   upload_val = argv[1];
    time_to_live = atoi(argv[2]);
    pari_dispari_pid_download = atoi(argv[3]);
-   quantita_download = atoi(argv[3]);
+   quantita_download = atoi(argv[4]);
    
    
    printf("\n Cooperante: time_upload %d \n", time_upload);
@@ -23,7 +23,7 @@ main(int argc, char **argv)
    printf("\n Cooperante: time_to_live %d \n", time_to_live);
    printf("\n Cooperante: pari_dispari_pid_download %d \n", pari_dispari_pid_download);
    printf("\n Cooperante: quantita_download %d \n", quantita_download);
-
+*/
    /*
    msqid = msgget(KEY, 0);
    if (msqid  < 0) 
@@ -205,4 +205,4 @@ main(int argc, char **argv)
    
    */	
     } 
-}
+

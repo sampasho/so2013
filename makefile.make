@@ -10,7 +10,7 @@ cooperante: cooperante.c util.c
 clean: gestore_coperanti.c util.c gestore_repository.c cooperante.c 
 	ipcclean
 
-all: gestore_coperanti gestore_repository cooperante
+#all: gestore_coperanti gestore_repository cooperante
 
 #all: gestore_coperanti gestore_repository cooperante clear
 
