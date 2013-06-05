@@ -1,14 +1,15 @@
 #include <stdio.h>
-//#include <sys/shm.h>
-//#include <sys/sem.h>
+#include <sys/shm.h>
+#include <sys/sem.h>
 #include <stdlib.h>
 #include <sys/types.h>
-//#include <sys/ipc.h>
+#include <sys/ipc.h>
 #include <unistd.h>
-//#include <sys/wait.h>
+#include <sys/wait.h>
 #include <string.h>
-//#include <sys/msg.h>
+#include <sys/msg.h>
 #include <signal.h>
+
 
 #define KEY 2945 //la coda  dei messaggi - KEY
 #define KEYMEM 2542 //memoria -KEY
