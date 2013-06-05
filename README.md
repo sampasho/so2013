@@ -24,5 +24,8 @@ tere kodi duhet te jete super i komentuar, ne menyre qe seli nga ne te marre ves
 
 monada git per te bere commit nga ubuntu:
 
+git commit -a -m "kompilim ne linux dhe gestore coperani funksional"
+git push
+
 
 
