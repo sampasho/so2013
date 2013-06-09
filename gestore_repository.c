@@ -50,11 +50,6 @@ int salvalog(int shmid, mem *log){
 
 void termina(){//int repmid, int shmid, int msqid, int semid, mem *log, int pid_pulizie
 
-
-
-
-
-
    salvalog(shmid, log);
 
    kill(pid_pulizie, SIGKILL);
@@ -93,7 +88,7 @@ void termina(){//int repmid, int shmid, int msqid, int semid, mem *log, int pid_
 	}
 
 	// disalloco il vettore di semafori
-	if (semctl(semid, 11, IPC_RMID, 0) < 0) {
+	if (semctl(semid, 2, IPC_RMID, 0) < 0) {
 	   printf("\n impossibile rimuovere il vettore di semafori\n");
 	   fflush(stdout);
 	   _exit(-1);

@@ -169,7 +169,7 @@ main(int argc, char **argv){
 
    //prit mesazh vdekje nga repository, po ta dergoi ai, ti vdis!
 	messaggio *da_ricevere = (messaggio*)malloc(sizeof(messaggio));
-	da_ricevere->tipo_msg = TIPO_KILL_YOURSELF;
+	//da_ricevere->tipo_msg = TIPO_KILL_YOURSELF;
 
    while(ricevi(msqid, da_ricevere) && runnig>0){
       sleep(1);
