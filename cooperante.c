@@ -42,7 +42,7 @@ taskDownload(){
    printf("\n Cooperante: sto downloadando \n");
 
     messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
-	da_spedire->tipo_msg =  TIPO_UPLOAD;
+	da_spedire->tipo_msg =  TIPO_DOWNLOAD;
 	da_spedire->pid_from =  getpid();
     sprintf(da_spedire->azione, "%d", quantita_download);
     fflush(stdout);

@@ -16,4 +16,4 @@ all:  gestore_coperanti gestore_repository cooperante
 
 
 clear:
-	rm gestore_coperanti gestore_repository cooperante
+	rm bin/gestore_coperanti bin/gestore_repository bin/cooperante

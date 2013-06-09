@@ -185,14 +185,14 @@ int main(int argc, char *argv[]) {
 
   //Alloco un vettore di semafori
 
-  if ((semid = semget(KEYSEM, 11, IPC_CREAT | 0666)) < 0) {
+  if ((semid = semget(KEYSEM, 2, IPC_CREAT | 0666)) < 0) {
 		printf("\n Gestore Repository: impossibile avere il semaforo\n");
 		fflush(stdout);
 		_exit(-1);
    }
 
    semctl(semid, 0, SETVAL, 1); //pulizie
-   semctl(semid, 1, SETVAL, 4); //upload
+   semctl(semid, 1, SETVAL, 1); //upload
 
 
    // creo un fork, che esegue un po di codice per fare le pulizie ogni tot
@@ -202,6 +202,8 @@ int main(int argc, char *argv[]) {
    pid_pulizie = fork();
    if (pid_pulizie == 0){
         //execl("gestore_arrivi","gestore_arrivi", NULL);
+        sam_down(semid, 0);
+
 
 		//flej 10 sec, e pastaj bej pastrimet
 		int forever=0;
@@ -243,6 +245,7 @@ int main(int argc, char *argv[]) {
             printf("\n end_t = %d \n", (int)end_t);
             int exec_time = end_t-start_t;
 
+            sam_up(semid, 0);
             //printf("\n esecuzione in %d secondi \n", exec_time);
             printf("\n Desperatehousewife: FAI LE PULIZIE \n");
 		}
@@ -255,6 +258,8 @@ int main(int argc, char *argv[]) {
    if (pid_uploader == 0){
 
          printf("\n UPLOADER: FACCIO UPLOAD SE NE CE BISOGNO \n");
+        //bloco semaforo
+        sam_down(semid, 1);
 
 		//flej 10 sec, e pastaj bej pastrimet
 		int forever=0;
@@ -268,7 +273,9 @@ int main(int argc, char *argv[]) {
 
              if(new_elem.padre_id>0){//elem valido..
 
-               // if(semafotro ){
+
+                if( semop(semid,2,0) == 0 ){
+
                     //add to queue
                     rep = (repository*) shmat(shmid, NULL, 0);
                     rep->array[rep->cont] = new_elem;
@@ -295,23 +302,24 @@ int main(int argc, char *argv[]) {
                     sprintf(da_spedire->azione, "Uploaded ok %s ", new_elem.dato);
                     fflush(stdout);
                     invia(msqid, da_spedire);
-                /*
+
                 }else{
 
                     messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
                     da_spedire->tipo_msg =  TIPO_ERROR_UPLOAD;
-                    da_spedire->pid_from =  new_elem->pid_from;
-                    sprintf(da_spedire->azione, "Uploaded error %s ", new_elem->dato);
+                    da_spedire->pid_from =  new_elem.padre_id;
+                    sprintf(da_spedire->azione, "Uploaded error %s ", new_elem.dato);
                     fflush(stdout);
                     invia(msqid, da_spedire);
 
 
                 }
-                */
+
 
              }
             }
-
+            //rilascio semaforo
+            sam_up(semid, 1);
 
             //printf("\n esecuzione in %d secondi \n", exec_time);
             printf("\n UPLOADER: FINE CICLO UPLOADZ\n");
@@ -324,7 +332,7 @@ int main(int argc, char *argv[]) {
 
    //pres mesazhet in arrivo
    messaggio *da_ricevere = (messaggio*)malloc(sizeof(messaggio));
-   da_ricevere->tipo_msg = TIPO_REGISTER;
+   //da_ricevere->tipo_msg = TIPO_REGISTER;
 
 
    while(ricevi(msqid, da_ricevere)){
@@ -378,7 +386,7 @@ int main(int argc, char *argv[]) {
         //respond with data to tipo_get_download
         //todo
 
-        //if(semaforo can download){
+        if(semop(semid,2,0) == 0 ){
 
             int quantita_download = (int)da_ricevere->azione;
 
@@ -409,7 +417,7 @@ int main(int argc, char *argv[]) {
             invia(msqid, da_spedire);
 
 
-        /*
+
         }else{
             //cant download right now, so send error msg, user will retry later..
 
@@ -422,7 +430,7 @@ int main(int argc, char *argv[]) {
                 invia(msqid, da_spedire);
 
         }
-        */
+
 
 
 
@@ -433,9 +441,6 @@ int main(int argc, char *argv[]) {
         //add to upload list
 
         file_elem new_elem;
-        //struct file_elem *new_elem= malloc(sizeof(*new_elem));
-
-        //file_elem new_elem = malloc(sizeof(file_elem));
 
         new_elem.padre_id=da_ricevere->pid_from;
         new_elem.tempo_di_vita =da_ricevere->extra;
@@ -445,11 +450,11 @@ int main(int argc, char *argv[]) {
         upload_queue[queue_nr] = new_elem;
         fflush(stdout);
 
-
         queue_nr++;
 
+    }
 
-	 }
+
 
    }
 
