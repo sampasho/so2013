@@ -27,7 +27,7 @@ main() {
 
    printf("\n Gestore Cooperanti: Apro file inputcoperanti.txt.\n");
    //lexoj rreshtin e pare
-   fscanf(fp, "%s %s %s %s %s %s" , time_upload, upload_live, upload_val, time_to_live, pari_dispari_pid_download, quantita_download);
+   fscanf(fp, "%s %s %s %s %s %s" , time_upload, upload_val, upload_live, time_to_live, pari_dispari_pid_download, quantita_download);
 
    while(!feof(fp)){
 	    //cdo rrresht nje femije
