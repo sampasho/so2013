@@ -15,6 +15,8 @@ main() {
    char pari_dispari_pid_download[20];
    char quantita_download[20];
 
+
+
    printf("\n inizio gestore cooperandi \n");
    //hapim failin, nese ka gabim ose nuk eksiston, atehere gabim, dhe dal
    if ((fp = fopen("inputcoperanti.txt", "r")) == NULL){

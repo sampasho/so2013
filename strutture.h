@@ -28,25 +28,28 @@
 #define TIPO_KILL_YOURSELF 7
 #define TIPO_READ_FOR_DOWNLOAD 8
 #define TIPO_GET_DOWNLOAD 9
+#define TIPO_ERROR_DOWNLOAD 10
 
 
 //tipo i te dhenave qe duhet te ruaj ne buffer cirlocalre
 typedef struct {
 	int padre_id;
 	int tempo_di_vita;
-	char dato[20];
+	char *dato;
 }file_elem;
 
-//mem condivisa upload/download
+//mem condivisa upload/download, fixed to 20 elems
 typedef struct {
    file_elem array[20];
    int cont;
 }repository;
 
+
 //la struttura del messaggio
 typedef struct {
 	long tipo_msg;
 	int pid_from;
+	int extra;
 	char azione[20];
 }messaggio;
 

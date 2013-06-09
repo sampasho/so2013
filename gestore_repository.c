@@ -16,6 +16,7 @@
    repository *rep;
    int msqid;
    int pid_pulizie;
+   int pid_uploader;
    int semid;
    int val;
 
@@ -23,7 +24,14 @@
    int max_coopranti = 100;
    int coda_cooperanti[100];
 
+   file_elem upload_queue[100];//fino a 100 msg di uploa din coda
+   int queue_nr=0;
+
+
+
 int salvalog(int shmid, mem *log){
+
+
 
     log = (mem*) shmat(shmid, NULL, 0);
     int i = 0;
@@ -50,6 +58,9 @@ void termina(){//int repmid, int shmid, int msqid, int semid, mem *log, int pid_
    salvalog(shmid, log);
 
    kill(pid_pulizie, SIGKILL);
+   kill(pid_uploader, SIGKILL);
+
+
 
    int val;
    val = semctl(semid, 0, GETVAL, 0);
@@ -140,9 +151,6 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
-
    if ((shmid = shmget(KEYMEM, sizeof(mem), IPC_CREAT | 0666)) < 0){
 		printf("\n impossibile avere memoria condivisa per i log\n");
 		fflush(stdout);
@@ -205,19 +213,100 @@ int main(int argc, char *argv[]) {
 
 			sleep(timer_pulizie_sek);
 
+
+			// do the real cleaning in here
+
+            int i;
+            for(i=0; i< 20; i++){ // all of them
+
+
+
+
+            }
+
+            //TODO - delete invalid data
+
+
+
+
             end_t=(int)time(NULL);
             printf("\n end_t = %d \n", (int)end_t);
             int exec_time = end_t-start_t;
 
             //printf("\n esecuzione in %d secondi \n", exec_time);
-
             printf("\n Desperatehousewife: FAI LE PULIZIE \n");
-
 		}
-
-
 		//ketu kam kodin e timerit qe do pastroje here pas here..
 
+   }
+
+
+   pid_uploader = fork();
+   if (pid_uploader == 0){
+
+         printf("\n UPLOADER: FACCIO UPLOAD SE NE CE BISOGNO \n");
+
+		//flej 10 sec, e pastaj bej pastrimet
+		int forever=0;
+		while (forever<1) {
+			sleep(4);//dormi 5 sec, e poi riprova a fare tutti gli upload
+
+            int i;
+            for(i=0;i<queue_nr ; i++){
+
+             file_elem new_elem  = upload_queue[i];
+
+             if(new_elem.padre_id>0){//elem valido..
+
+               // if(semafotro ){
+                    //add to queue
+                    rep = (repository*) shmat(shmid, NULL, 0);
+                    rep->array[rep->cont] = new_elem;
+
+
+                    rep->cont++;
+
+                    if(rep->cont==20){
+                        rep->cont=0;
+                    }
+
+                    shmdt((void*)rep);
+                    //emel becomes blak // todo - remove this.
+                    new_elem.dato = "";
+                    new_elem.padre_id = 0;
+                    new_elem.tempo_di_vita = 0;
+
+                    upload_queue[i] = new_elem;
+                    //mando msg upload avenuto
+
+                    messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
+                    da_spedire->tipo_msg =  TIPO_OK_UPLOAD;
+                    da_spedire->pid_from =  new_elem.padre_id;
+                    sprintf(da_spedire->azione, "Uploaded ok %s ", new_elem.dato);
+                    fflush(stdout);
+                    invia(msqid, da_spedire);
+                /*
+                }else{
+
+                    messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
+                    da_spedire->tipo_msg =  TIPO_ERROR_UPLOAD;
+                    da_spedire->pid_from =  new_elem->pid_from;
+                    sprintf(da_spedire->azione, "Uploaded error %s ", new_elem->dato);
+                    fflush(stdout);
+                    invia(msqid, da_spedire);
+
+
+                }
+                */
+
+             }
+            }
+
+
+            //printf("\n esecuzione in %d secondi \n", exec_time);
+            printf("\n UPLOADER: FINE CICLO UPLOADZ\n");
+		}
+		//ketu kam kodin e timerit qe do pastroje here pas here..
 
    }
 
@@ -279,45 +368,76 @@ int main(int argc, char *argv[]) {
         //respond with data to tipo_get_download
         //todo
 
-        int quantita_download = (int)da_ricevere->azione;
+        //if(semaforo can download){
 
-        messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
+            int quantita_download = (int)da_ricevere->azione;
 
-            char res[3000];
-            int i;
-            //rep = (mem*) shmat(shmid, NULL, 0);
-            //ho meno elementi di quelli richiesti
-            if(quantita_download > rep->cont){
-              for(i=0; i<rep->cont; i++){
-                strcpy(res,rep->array[i].dato);
-              }
-            }else{
+            messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
 
-              for(i=rep->cont-1 ; i > rep->cont - quantita_download -1; i--){
-                strcpy(res, rep->array[i].dato);
-              }
+                char res[3000];
+                int i;
+                //rep = (mem*) shmat(shmid, NULL, 0);
+                //ho meno elementi di quelli richiesti
+                if(quantita_download > rep->cont){
+                  for(i=0; i<rep->cont; i++){
+                    strcpy(res,rep->array[i].dato);
+                  }
+                }else{
 
-            }
+                  for(i=rep->cont-1 ; i > rep->cont - quantita_download -1; i--){
+                    strcpy(res, rep->array[i].dato);
+                  }
+
+                }
 
 
 
-        da_spedire->tipo_msg =  TIPO_GET_DOWNLOAD;
-        da_spedire->pid_from =  da_ricevere->pid_from;
-        sprintf(da_spedire->azione, "| %s", res);
-        fflush(stdout);
-        invia(msqid, da_spedire);
+            da_spedire->tipo_msg =  TIPO_GET_DOWNLOAD;
+            da_spedire->pid_from =  da_ricevere->pid_from;
+            sprintf(da_spedire->azione, "| %s", res);
+            fflush(stdout);
+            invia(msqid, da_spedire);
+
+
+        /*
+        }else{
+            //cant download right now, so send error msg, user will retry later..
+
+
+                messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
+                da_spedire->tipo_msg =  TIPO_ERROR_DOWNLOAD;
+                da_spedire->pid_from =  da_ricevere->pid_from;
+                sprintf(da_spedire->azione, "Cant download this time, try later %d", da_ricevere->pid_from);
+                fflush(stdout);
+                invia(msqid, da_spedire);
+
+        }
+        */
+
+
 
      }else if(da_ricevere->tipo_msg == TIPO_UPLOAD){
+
         printf("GESTIONE REPOSITORY: new upload request from %s \n", da_ricevere->pid_from);
 
-        //bejme upload te thjeshte..
+        //add to upload list
+
+        file_elem new_elem;
+        //struct file_elem *new_elem= malloc(sizeof(*new_elem));
+
+        //file_elem new_elem = malloc(sizeof(file_elem));
+
+        new_elem.padre_id=da_ricevere->pid_from;
+        new_elem.tempo_di_vita =da_ricevere->extra;
+
+        sprintf(new_elem.dato , "%s",da_ricevere->azione);
+
+        upload_queue[queue_nr] = new_elem;
+        fflush(stdout);
 
 
+        queue_nr++;
 
-        //TODO --- si duhet bere
-        //try to uplod, send  upload ok or ko when done
-        //send also ready_for_download, when ok, so will trigger downloads from ineteresed agents
-        //todo
 
 	 }
 

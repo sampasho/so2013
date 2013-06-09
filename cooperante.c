@@ -26,6 +26,10 @@ taskUpload(){
    	messaggio *da_spedire = (messaggio*)malloc(sizeof(messaggio));
 	da_spedire->tipo_msg =  TIPO_UPLOAD;
 	da_spedire->pid_from =  getpid();
+
+	da_spedire->extra =  upload_live;
+
+
     sprintf(da_spedire->azione, "Upload %s", upload_val);
     fflush(stdout);
     invia(msqid, da_spedire);
@@ -202,6 +206,11 @@ main(int argc, char **argv){
       }else if(da_ricevere->tipo_msg == TIPO_OK_UPLOAD && da_ricevere->pid_from == getpid()){
         //receive downloaded data..
         printf("\n --> cooperante:  upload ok :) \n");
+      }else if(da_ricevere->tipo_msg == TIPO_ERROR_DOWNLOAD && da_ricevere->pid_from == getpid()){
+        //receive downloaded data..
+        printf("\n --> cooperante:  errore downlaod, sleep 3 sec, and retry again.. :) \n");
+        sleep(3);
+        taskDownload();
       }
 
 
