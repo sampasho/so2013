@@ -17,7 +17,7 @@ int quantita_download;
 //ky duhet te fleje gjume
 taskLavora(){
    printf("\n Cooperante: sto lavorando \n");
-   sleep(1);
+   sleep(4);
 }
 //ky duhet te eksekutohet nga repository si utua esclusione
 taskUpload(){
@@ -89,10 +89,12 @@ main(int argc, char **argv){
 
    time_upload = atoi(argv[1]);
    upload_val = argv[2];
-   upload_live = atoi(argv[6]);
-   time_to_live = atoi(argv[3]);
-   pari_dispari_pid_download = atoi(argv[4]);
-   quantita_download = atoi(argv[5]);
+   upload_live = atoi(argv[3]);
+   time_to_live = atoi(argv[4]);
+   pari_dispari_pid_download = atoi(argv[5]);
+   quantita_download = atoi(argv[6]);
+
+//int execCode =(execl("./cooperante", "cooperante", time_upload, upload_val, upload_live,  time_to_live,  pari_dispari_pid_download, quantita_download, NULL));
 
 
 
@@ -133,7 +135,7 @@ main(int argc, char **argv){
 
     sono_il_padre = fork();
     if (sono_il_padre == 0){
-        printf("\n cooperante: task timer \n");
+        printf("\n cooperante: task timer , lived=%d , tolive=%d\n", long_live, time_to_live);
 
 
         while(long_live<time_to_live){

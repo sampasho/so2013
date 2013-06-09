@@ -219,8 +219,18 @@ int main(int argc, char *argv[]) {
             int i;
             for(i=0; i< 20; i++){ // all of them
 
+                file_elem my_elem  = rep->array[i];
+                my_elem.tempo_di_vita = my_elem.tempo_di_vita - timer_pulizie_sek;
 
+                //fake delete here...
+                if(my_elem.tempo_di_vita < 1){
 
+                    rep->array[i].dato="";
+                    rep->array[i].padre_id=0;
+                    rep->array[i].tempo_di_vita=-1;
+
+                    rep->cont = i;
+                }
 
             }
 
