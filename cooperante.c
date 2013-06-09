@@ -6,17 +6,13 @@ int long_live=0;
 int msqid;
 int semid;
 int shmid;
-
 int upload_live;
-
-
 int uploaded = 0;
-
-   char upload_val[20];
-   int time_upload;
-   int time_to_live;
-   int pari_dispari_pid_download;
-   int quantita_download;
+char *upload_val;
+int time_upload;
+int time_to_live;
+int pari_dispari_pid_download;
+int quantita_download;
 
 //ky duhet te fleje gjume
 taskLavora(){
@@ -96,12 +92,12 @@ main(int argc, char **argv){
 
 
 
-   printf("\n Cooperante: time_upload %d \n", atime_upload);
-   printf("\n Cooperante: time_upload %d \n", atime_upload);
-   printf("\n Cooperante: time_upload %d \n", atime_upload);
-   printf("\n Cooperante: time_upload %d \n", atime_upload);
-   printf("\n Cooperante: time_upload %d \n", atime_upload);
-   printf("\n Cooperante: time_upload %d \n", atime_upload);
+   printf("\n Cooperante: time_upload %d \n", time_upload);
+   printf("\n Cooperante: upload_val %d \n", upload_val);
+   printf("\n Cooperante: upload_live %d \n", upload_live);
+   printf("\n Cooperante: time_to_live %d \n", time_to_live);
+   printf("\n Cooperante: pari_dispari_pid_download %d \n", pari_dispari_pid_download);
+   printf("\n Cooperante: quantita_download %d \n", quantita_download);
 
 
 
