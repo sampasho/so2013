@@ -1,5 +1,10 @@
 so2013
 ======
+Para compilimit, duhet te ekzistoje cartela ./bin me file e inputit me te cilin marrin konfigurimi proceset
+es.
+    20 sam 100 70 0 3
+    50 genty 120 120 1 1
+    80 elton 150 200 0 2
 
 ky projekt funksionon ne ubuntu 13.04 per te tjera plataforma mbase duhen bere modifikime minimale..
 
@@ -16,7 +21,7 @@ per te eksekutuar programet hap 2 terminale e shkruaj:
 	./gestore_coperanti
 
 	ose/dhe
-	
+
 	./gestore_repository
 
 tere kodi duhet te jete super i komentuar, ne menyre qe seli nga ne te marre vesh se cfare po ndodh e pse !
